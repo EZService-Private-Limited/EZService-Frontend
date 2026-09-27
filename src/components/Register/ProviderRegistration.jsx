@@ -24,18 +24,28 @@ import { useNavigate } from 'react-router-dom';
 function RegistrationForm() {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
-    name: 'Vinay',
-    email: 'vinay@gmail.com',
-    mobile: '9974591318',
-    password: 'Vinay@123',
-    confirmPassword: 'Vinay@123',
-    address: 'anc',
-    city: 'Ahmedabad',
-    state: 'gujarat',
-    country: 'india',
+    name: '',
+    email: '',
+    mobile: '',
+    password: '',
+    confirmPassword: '',
+    address: '',
+    city: '',
+    state: '',
+    country: '',
     otp: '',
   });
   const [otpRequested, setOtpRequested] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  // Mobile number as typed, without spaces (saved on the provider's account).
+  const cleanMobile = () => formData.mobile.replace(/\s+/g, '');
+  // Twilio needs the full international format; Indian numbers get +91 like on customer sign-up.
+  const otpPhone = () => {
+    const mobile = cleanMobile();
+    return mobile.startsWith('+') ? mobile : `+91${mobile.slice(-10)}`;
+  };
 
   const totalSteps = 6;
   const progress = ((currentStep + 1) / totalSteps) * 100;
@@ -104,57 +114,68 @@ function RegistrationForm() {
   const nextStep = () => {
     const errors = validateStep(currentStep);
     if (Object.keys(errors).length === 0) {
+      setErrorMessage('');
       setCurrentStep((prevStep) => prevStep + 1);
     } else {
-      console.log('Validation errors:', errors);
+      setErrorMessage(Object.values(errors)[0]);
     }
   };
 
   const prevStep = () => {
+    setErrorMessage('');
     setCurrentStep((prevStep) => prevStep - 1);
   };
 
   const navigate = useNavigate();
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const errors = validateStep(currentStep);
-    if (Object.keys(errors).length === 0) {
-      api.post('/otp/verify-otp', {phone: formData.mobile, code: formData.otp})
-        .then((response) => {
-          console.log('OTP verified successfully:', response.data);
-          
-          api.post('/provider/register', formData)
-            .then((response) => {
-              console.log('Registration successful:', response.data);
-              navigate('/provider/login');
-            })
-            .catch((error) => {
-              console.error('Error during registration:', error);
-            });
-        }).catch((error) => {
-          console.error('Error verifying OTP:', error);
-        });
-
-      console.log('Form submitted:', formData);
-      setCurrentStep((prevStep) => prevStep + 1);
-    } else {
-      console.log('Validation errors:', errors);
+    if (Object.keys(errors).length > 0) {
+      setErrorMessage(Object.values(errors)[0]);
+      return;
+    }
+    if (submitting) return;
+    setSubmitting(true);
+    setErrorMessage('');
+    try {
+      await api.post('/otp/verify-otp', { phone: otpPhone(), code: formData.otp });
+    } catch (error) {
+      setErrorMessage(
+        error.response?.status === 400
+          ? 'Incorrect OTP. Please check the code and try again.'
+          : error.response?.data?.errorMessage || 'Could not verify the OTP. Please try again.'
+      );
+      setSubmitting(false);
+      return;
+    }
+    try {
+      // eslint-disable-next-line no-unused-vars
+      const { confirmPassword, otp, ...details } = formData;
+      await api.post('/provider/register', { ...details, mobile: cleanMobile() });
+      setCurrentStep(totalSteps);
+      setTimeout(() => navigate('/provider/login', { replace: true }), 1500);
+    } catch (error) {
+      setErrorMessage(
+        error.response?.status === 409
+          ? 'An account with this email or mobile number already exists. Please log in instead.'
+          : error.response?.data?.message || 'Registration failed. Please try again.'
+      );
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const handleGetOtp = () => {
-    if (!formData.mobile || !/^\+?[0-9]{10,15}$/.test(formData.mobile)) {
-      console.log('Invalid mobile number before OTP request.');
+  const handleGetOtp = async () => {
+    if (!/^\+?[0-9]{10,15}$/.test(cleanMobile())) {
+      setErrorMessage('Please enter a valid mobile number');
       return;
     }
-    // Simulate OTP request
-    api.post('/otp/send-otp', { phone: formData.mobile })
-      .then((response) => {
-        console.log('OTP sent successfully:', response.data);
-      })
-      .catch((error) => {
-        console.error('Error sending OTP:', error);
-      });
-    setOtpRequested(true);
+    setErrorMessage('');
+    try {
+      await api.post('/otp/send-otp', { phone: otpPhone() });
+      setOtpRequested(true);
+    } catch (error) {
+      setErrorMessage(error.response?.data?.errorMessage || 'Could not send the OTP. Please try again.');
+    }
   };
 
   return (
@@ -347,6 +368,10 @@ function RegistrationForm() {
               </div>
             )}
 
+            {errorMessage && currentStep < totalSteps && (
+              <p className="text-sm text-red-500">{errorMessage}</p>
+            )}
+
             {/* Navigation Buttons */}
             <div className="flex justify-between mt-2">
               <button
@@ -374,6 +399,7 @@ function RegistrationForm() {
                   type="button"
                   className="ml-auto px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-sm hover:bg-green-600"
                   onClick={handleSubmit}
+                  disabled={submitting}
                 >
                   Complete <Check className="w-4 h-4 inline ml-1" />
                 </button>
