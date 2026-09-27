@@ -1,0 +1,11 @@
+import{c as r,j as e,B as i}from"./index-DcNg7pXR.js";/**
+ * @license lucide-react v0.487.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const d=[["polyline",{points:"22 12 16 12 14 15 10 15 8 12 2 12",key:"o97t9d"}],["path",{d:"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z",key:"oot6mr"}]],m=r("inbox",d);/**
+ * @license lucide-react v0.487.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const h=[["path",{d:"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3",key:"wmoenq"}],["path",{d:"M12 9v4",key:"juzpu7"}],["path",{d:"M12 17h.01",key:"p32p05"}]],l=r("triangle-alert",h);function u({icon:t=m,title:n,description:s,actionLabel:a,actionTo:c,onAction:x,className:o=""}){return e.jsxs("div",{className:`flex flex-col items-center text-center px-6 py-12 ${o}`,children:[e.jsx("div",{className:"h-14 w-14 rounded-md bg-indigo-50 flex items-center justify-center mb-4",children:e.jsx(t,{className:"h-7 w-7 text-indigo-500","aria-hidden":"true"})}),e.jsx("h3",{className:"text-lg font-semibold text-gray-900",children:n}),s&&e.jsx("p",{className:"mt-1 text-sm text-gray-500 max-w-xs",children:s}),a&&e.jsx(i,{className:"mt-5",to:c,onClick:x,children:a})]})}function j({title:t="Something went wrong",description:n="Please check your connection and try again.",onRetry:s,className:a=""}){return e.jsxs("div",{className:`flex flex-col items-center text-center px-6 py-12 ${a}`,role:"alert",children:[e.jsx("div",{className:"h-14 w-14 rounded-md bg-red-50 flex items-center justify-center mb-4",children:e.jsx(l,{className:"h-7 w-7 text-red-500","aria-hidden":"true"})}),e.jsx("h3",{className:"text-lg font-semibold text-gray-900",children:t}),e.jsx("p",{className:"mt-1 text-sm text-gray-500 max-w-xs",children:n}),s&&e.jsx(i,{variant:"secondary",className:"mt-5",onClick:s,children:"Try again"})]})}function y({children:t}){return t?e.jsxs("div",{className:"flex items-start gap-2 rounded-sm bg-red-50 px-3 py-2.5 text-sm text-red-700",role:"alert",children:[e.jsx(l,{className:"h-4 w-4 mt-0.5 shrink-0","aria-hidden":"true"}),e.jsx("span",{children:t})]}):null}export{j as E,y as I,l as T,u as a,m as b};

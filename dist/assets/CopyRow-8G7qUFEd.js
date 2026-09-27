@@ -1,0 +1,6 @@
+import{c,r as d,j as e,a5 as x}from"./index-DcNg7pXR.js";/**
+ * @license lucide-react v0.487.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const l=[["rect",{width:"14",height:"14",x:"8",y:"8",rx:"2",ry:"2",key:"17jyea"}],["path",{d:"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2",key:"zix9uf"}]],p=c("copy",l);function m({label:s,value:t,mono:o=!1}){const[i,a]=d.useState(!1);if(!t)return null;const r=()=>{var n;(n=navigator.clipboard)==null||n.writeText(String(t)).then(()=>{a(!0),setTimeout(()=>a(!1),1500)}).catch(()=>{})};return e.jsxs("div",{className:"flex items-center justify-between gap-3 py-2",children:[e.jsxs("div",{className:"min-w-0",children:[e.jsx("p",{className:"text-xs text-gray-500",children:s}),e.jsx("p",{className:`text-sm font-semibold text-gray-900 break-all ${o?"font-mono tracking-wide":""}`,children:t})]}),e.jsxs("button",{type:"button",onClick:r,className:"shrink-0 inline-flex items-center gap-1 rounded-sm px-2 py-1.5 text-xs font-semibold text-indigo-600 hover:bg-indigo-50","aria-label":`Copy ${s}`,children:[i?e.jsx(x,{className:"h-4 w-4","aria-hidden":"true"}):e.jsx(p,{className:"h-4 w-4","aria-hidden":"true"}),i?"Copied":"Copy"]})]})}export{m as C};
